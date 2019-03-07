@@ -54,7 +54,16 @@
                             <outlet property="delegate" destination="RRO-xq-fnv" id="Bgl-we-J5d"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" id="Xtz-pv-WOa"/>
+                    <navigationItem key="navigationItem" id="Xtz-pv-WOa">
+                        <barButtonItem key="rightBarButtonItem" title="refresh" id="76b-mE-FRE">
+                            <connections>
+                                <action selector="refresh:" destination="RRO-xq-fnv" id="M9P-P3-xyP"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="collectionView" destination="lHy-Iv-SOd" id="5hC-Fu-I7I"/>
+                    </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tIA-Cu-H9o" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

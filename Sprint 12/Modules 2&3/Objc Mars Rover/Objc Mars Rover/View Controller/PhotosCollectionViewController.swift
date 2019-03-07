@@ -58,9 +58,10 @@ class PhotosCollectionViewController: UIViewController, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCell", for: indexPath) as? ImageCollectionViewCell else { return ImageCollectionViewCell() }
-       // let photoRef = photoReferences[indexPath.row]
-       // cell.imageView.image = UIImage(named: photoRef.imgSrc!)
-     //   loadImage(forCell: cell, forItemAt: indexPath)
+        let photoRef = photoReferences[indexPath.row]
+        let imageData = try? Data(contentsOf: photoRef.imageURL)
+        cell.imageView.image = UIImage(data: imageData!)
+       // loadImage(forCell: cell, forItemAt: indexPath)
         
         return cell
     }
@@ -76,6 +77,10 @@ class PhotosCollectionViewController: UIViewController, UICollectionViewDataSour
         }
     }
     
+    @IBAction func refresh(_ sender: Any) {
+        
+        collectionView.reloadData()
+    }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
         var totalUsableWidth = collectionView.frame.width
@@ -204,7 +209,7 @@ class PhotosCollectionViewController: UIViewController, UICollectionViewDataSour
                         NSLog("Error fetching info for curiosity: \(error)")
                         return
                     }
-                 // self.photoReferences = photoRef.photos ?? []
+                    self.photoReferences = [photoRef] 
                     
                 }
                 
@@ -217,7 +222,7 @@ class PhotosCollectionViewController: UIViewController, UICollectionViewDataSour
         }
     
     
-    private var photoReferences = [OSIPhoto]() {
+    private var photoReferences = [MarsPhotoReference]() {
         didSet {
            // cache.clear()
             DispatchQueue.main.async { self.collectionView?.reloadData() }

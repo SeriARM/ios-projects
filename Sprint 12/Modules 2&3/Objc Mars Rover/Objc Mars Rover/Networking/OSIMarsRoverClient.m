@@ -7,8 +7,8 @@
 //
 
 #import "OSIMarsRoverClient.h"
-#import "OSIMarsRover.h"
-#import "Objc_Mars_Rover-Swift.h"
+
+
 // apiKey: A5GInzhik79kruLeQ4FYlN02lBcTmwnTnV5pHIKi
 //  baseURL = URL(string: "https://api.nasa.gov/mars-photos/api/v1")!
 
@@ -108,7 +108,7 @@ static NSString * const apiKey = @"A5GInzhik79kruLeQ4FYlN02lBcTmwnTnV5pHIKi";
 }
 
 
-- (void)fetchPhotosFrome:(OSIMarsRover *)rover onSol:(int )sol completion:(void (^)(NSDictionary *dict, NSError * _Nullable))completion {
+- (void)fetchPhotosFrome:(OSIMarsRover *)rover onSol:(int )sol completion:(void (^)(MarsPhotoReference *dict, NSError * _Nullable))completion {
     
     NSURL *url = [NSURL URLWithString:baseURL];
     
@@ -124,13 +124,16 @@ static NSString * const apiKey = @"A5GInzhik79kruLeQ4FYlN02lBcTmwnTnV5pHIKi";
     [urlComponents setQueryItems:@[queryItemApiKey, queryItemSol]];
     
     NSURL *requestURL = [urlComponents URL];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
+ //   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
     
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:
-      ^(NSData * _Nullable data,
-        NSURLResponse * _Nullable response,
-        NSError * _Nullable error) {
-          
+  //  NSData *data = [NSData dataWithContentsOfURL:requestURL];
+    [[[NSURLSession sharedSession] dataTaskWithURL:requestURL completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    
+//    [[[NSURLSession sharedSession] dataTaskWithRequest:requestURL completionHandler:
+//      ^(NSData * _Nullable data,
+//        NSURLResponse * _Nullable response,
+//        NSError * _Nullable error) {
+        
           if (error) {
               NSLog(@"Error fetching data: %@", error);
               completion(nil, error);
@@ -141,14 +144,37 @@ static NSString * const apiKey = @"A5GInzhik79kruLeQ4FYlN02lBcTmwnTnV5pHIKi";
               completion(nil, [[NSError alloc] init]);
               return;
           }
-          NSDictionary *photoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-          if (![photoJSON isKindOfClass:[NSDictionary class]]) {
-              NSLog(@"JSON error, not dictinary");
-              completion(nil, error);
-              
-              return;
-          }
-          
+        NSError *decodingError = nil;
+        NSDictionary *decodedObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:&decodingError];
+        
+        if (decodingError != nil) {
+            NSLog(@"Error decoding JSON: %@", decodingError);
+            completion(nil, decodingError);
+            return;
+        }
+        
+        if ([decodedObject isKindOfClass:[NSDictionary class]] == NO) {
+            NSLog(@"JSON result is not a dictionary");
+            completion(nil, nil);
+            return;
+        }
+        
+        NSArray *results = [decodedObject objectForKey:@"photos"];
+        if ([results isKindOfClass:[NSArray class]] == NO) {
+            NSLog(@"JSON does not have results array");
+            completion(nil, nil);
+            return;
+        }
+        
+        MarsPhotoReference *firstResult = [results firstObject];
+        if ([firstResult isKindOfClass:[NSDictionary class]] == NO) {
+            NSLog(@"First JSON result is not a dictionary");
+            completion(nil, nil);
+            return;
+        }
+        
+        completion(firstResult, nil);
+       
           
       }]resume];
       }

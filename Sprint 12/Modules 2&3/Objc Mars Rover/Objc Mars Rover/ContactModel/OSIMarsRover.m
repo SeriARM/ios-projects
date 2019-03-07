@@ -12,6 +12,10 @@
 
 @end
 
+@implementation OSICamera
+
+
+@end
 
 @implementation OSIPhoto
 
