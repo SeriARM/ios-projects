@@ -59,8 +59,8 @@ class PhotosCollectionViewController: UIViewController, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCell", for: indexPath) as? ImageCollectionViewCell else { return ImageCollectionViewCell() }
         let photoRef = photoReferences[indexPath.row]
-        let imageData = try? Data(contentsOf: photoRef.imageURL)
-        cell.imageView.image = UIImage(data: imageData!)
+        let image = UIImage(named: photoRef.imgSrc!)
+        cell.imageView.image = image
        // loadImage(forCell: cell, forItemAt: indexPath)
         
         return cell
@@ -198,18 +198,18 @@ class PhotosCollectionViewController: UIViewController, UICollectionViewDataSour
         }
     }
     
-    private var solDescription: OSIPhoto? {
+    private var solDescription: OSIPhoto1? {
         didSet {
             if let rover = roverInfo,
                 let sol = solDescription?.sol {
-                photoReferences = []
+                photoReferences = OSIPhoto?
                 osiMarsRoverClient.fetchPhotosFrome(rover, onSol: Int32(truncating: sol)) {photoRef, error in
                     
                     if let error = error {
                         NSLog("Error fetching info for curiosity: \(error)")
                         return
                     }
-                    self.photoReferences = [photoRef] 
+                    self.photoReferences = photoRef
                     
                 }
                 
@@ -222,7 +222,7 @@ class PhotosCollectionViewController: UIViewController, UICollectionViewDataSour
         }
     
     
-    private var photoReferences = [MarsPhotoReference]() {
+    private var photoReferences = OSIPhoto() {
         didSet {
            // cache.clear()
             DispatchQueue.main.async { self.collectionView?.reloadData() }

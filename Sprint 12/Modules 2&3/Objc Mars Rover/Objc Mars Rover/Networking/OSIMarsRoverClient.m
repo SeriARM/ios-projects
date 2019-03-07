@@ -91,7 +91,7 @@ static NSString * const apiKey = @"A5GInzhik79kruLeQ4FYlN02lBcTmwnTnV5pHIKi";
           NSMutableArray *photos = [NSMutableArray array];
           
           for (NSDictionary *phot in photoDict) {
-              OSIPhoto *photo = [[OSIPhoto alloc] init];
+              OSIPhoto1 *photo = [[OSIPhoto1 alloc] init];
               
               photo.sol = [phot valueForKey:@"sol"];
               photo.totalPhotos = [phot valueForKey:@"total_photos"];
@@ -108,7 +108,7 @@ static NSString * const apiKey = @"A5GInzhik79kruLeQ4FYlN02lBcTmwnTnV5pHIKi";
 }
 
 
-- (void)fetchPhotosFrome:(OSIMarsRover *)rover onSol:(int )sol completion:(void (^)(MarsPhotoReference *dict, NSError * _Nullable))completion {
+- (void)fetchPhotosFrome:(OSIMarsRover *)rover onSol:(int )sol completion:(void (^)(OSIPhoto *dict, NSError * _Nullable))completion {
     
     NSURL *url = [NSURL URLWithString:baseURL];
     
@@ -159,23 +159,23 @@ static NSString * const apiKey = @"A5GInzhik79kruLeQ4FYlN02lBcTmwnTnV5pHIKi";
             return;
         }
         
-        NSArray *results = [decodedObject objectForKey:@"photos"];
+        OSIPhoto *results = [decodedObject objectForKey:@"photos"];
         if ([results isKindOfClass:[NSArray class]] == NO) {
             NSLog(@"JSON does not have results array");
             completion(nil, nil);
             return;
         }
         
-        MarsPhotoReference *firstResult = [results firstObject];
-        if ([firstResult isKindOfClass:[NSDictionary class]] == NO) {
-            NSLog(@"First JSON result is not a dictionary");
-            completion(nil, nil);
-            return;
-        }
+//        OSIPhoto *firstResult = [results firstObject];
+//        if ([firstResult isKindOfClass:[NSDictionary class]] == NO) {
+//            NSLog(@"First JSON result is not a dictionary");
+//            completion(nil, nil);
+//            return;
+//        }
         
-        completion(firstResult, nil);
+        completion(results, nil);
        
-          
+        
       }]resume];
       }
       

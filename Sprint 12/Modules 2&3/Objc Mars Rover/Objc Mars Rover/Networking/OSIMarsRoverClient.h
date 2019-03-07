@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Objc_Mars_Rover-Swift.h"
 #import "OSIMarsRover.h"
+#import "OSIMarsPhoto.h"
+//#import "Objc_Mars_Rover-Swift.h"
 
 
 
@@ -20,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSArray *savedPhotos;
 
 - (instancetype)init;
-- (void)fetchPhotosFrome:(OSIMarsRover *)rover onSol:(int )sol completion:(void (^)(MarsPhotoReference *dict, NSError * _Nullable))completion;
+- (void)fetchPhotosFrome:(OSIMarsRover *)rover onSol:(int )sol completion:(void (^)(OSIPhoto *dict, NSError * _Nullable))completion;
 - (void)searchForRover:(NSString *)roverName completion:(void (^)(OSIMarsRover *rover, NSError * _Nullable))completion;
 @end
 
